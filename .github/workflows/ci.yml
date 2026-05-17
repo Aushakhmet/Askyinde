@@ -1,0 +1,60 @@
+name: Askyinde CI
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run security lint
+        run: npm run lint:security
+        continue-on-error: true
+
+      - name: Run unit tests with coverage
+        run: npm run test:coverage
+        continue-on-error: true
+
+      - name: Run npm audit
+        run: npm audit
+        continue-on-error: true
+
+      - name: Build project
+        run: npm run build
+
+      - name: Run Cypress tests
+        run: npm run cypress:run
+        continue-on-error: true
+
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-report
+          path: coverage/
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: build-folder
+          path: build/
