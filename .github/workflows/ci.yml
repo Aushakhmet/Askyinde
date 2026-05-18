@@ -39,7 +39,7 @@ jobs:
         continue-on-error: true
 
       - name: Build project
-  run: CI=false npm run build
+        run: CI=false npm run build
 
       - name: Run Cypress tests
         uses: cypress-io/github-action@v6
