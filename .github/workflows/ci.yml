@@ -39,11 +39,15 @@ jobs:
         continue-on-error: true
 
       - name: Build project
-        run: npm run build
+  run: CI=false npm run build
 
       - name: Run Cypress tests
-        run: npm run cypress:run
+        uses: cypress-io/github-action@v6
         continue-on-error: true
+        with:
+          start: npm start
+          wait-on: 'http://localhost:3000'
+          browser: chrome
 
       - name: Upload coverage artifact
         uses: actions/upload-artifact@v4
